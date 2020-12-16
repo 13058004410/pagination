@@ -8,9 +8,20 @@
         *{
             margin:0;padding:0;box-sizing: border-box;
         }
+
+        #content{
+            width:56%;
+            border:1px solid orange;
+            float:left;
+        }
+
         #pagination{
             border:1px solid orange;
+            width:58%;
+            clear:both;
+            /* float:left; */
         }
+        
         #pagination ul:after{
             content:'';
             display:block;
@@ -26,6 +37,25 @@
             width:10%;
             text-align: center;
             cursor: pointer;
+        }
+        #content ul li{
+            display: inline-block;
+            list-style-type: none;
+            border:1px solid #999;
+            line-height: 50px;
+            width:220px;
+            text-align: center;
+            cursor: pointer;
+        }
+        #content ul li p{
+            width:60%;
+            color:#666;
+            font-weight:normal;
+            display:inline-block;
+            text-overflow:ellipsis;
+            overflow:hidden;
+            white-space:nowrap;
+            font-size:14px;
         }
     </style>
     <script src="./js/jquery.min.js"></script>
@@ -45,46 +75,84 @@
     </div>
 </body>
 <script>
-    $(function(){       
-        $('.li').click(function(){            
-            var x=$(this).attr('index');
-            var y=parseInt(x)
-            // alert(typeof(y))           
-        });
+    $(function(){
+        //声明一个变量pno用来传参--->当前页码   
+        var pno;       
+        //页面默认加载的分页列表---->第一页
+        getData(1);
 
-        //页面默认加载的分页列表
-        function getData(curPage){
+        //第一个函数：发ajax请求获取后端数据，调用第二个函数       
+        function getData(curPage){           
             $.ajax({
                 type:'get',
-                url:'/huoqu?pid:'+curPage,
+                url:'/huoqu?pno='+curPage,
                 contentType:'application/json;utf-8',  
                 success:function(data){
-                    // console.log(data.length);
+                    // console.log(data);
                     // $('#pagination').html(data)
                     //拿到数据之后在页面循环输出
-                    innerData(data,curPage);
+                    innerData(data);
                 },
                 error:function(e){
                     console.log(e.staus)
                     console.log(e.responseText)
                 }
+            });           
+        }
+       
+        //第二个函数：生成分页列表、生成内容列表
+        function innerData(data){
+            //生成分页列表
+            // console.log(data.length)
+            var str='<ul>';
+            for(var i=1;i<=Math.ceil(data.length/2);i++){
+                str+=`
+                    <li class="li" index="${i}">${i}</li>
+                `;
+            }
+            str+='</ul>';
+            $('#pagination').html(str);
+
+            //生成内容列表
+            var html='<ul>';
+            for(var i=0;i<Math.ceil(data.length);i++){
+                html+=`                   
+                        <li>
+                            <img src="${data[i].img}" alt="">
+                            <p>${data[i].p}</p>
+                        </li>                   
+                `;     
+            }
+            html+='</ul>';
+            $('#content').html(html);
+            
+            //点击切换内容页
+            $('.li').click(function(){
+                pno=$(this).attr('index');
+                
+                //获取pno发再次发ajax请求
+                getData(pno); 
+                
+                var html='<ul>';
+                for(var i=0;i<Math.ceil(data.length);i++){  
+                    // console.log(11168);                  
+                    html+=`                   
+                            <li>
+                                <img src="${data[i].img}" alt="">
+                                <p>${data[i].p}</p>
+                            </li>                   
+                    `;                         
+                }
+                html+='</ul>';
+                // $('#content').remove();
+                $('#content').html(html);               
             });
         }
 
-        function innerData(data,curPage){
-            var str='<ul>';
-                for(var i=0;i<data.length;i++){
-                    str+=`
-                        <li class="li" index="${i}">${i}</li>
-                    `;
-                }
-                str+='</ul>';
-                $('#pagination').html(str);
-        }
+        
+        
 
-
-
-
+        
     })
 </script>
 </html>

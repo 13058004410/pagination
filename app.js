@@ -21,13 +21,19 @@ var pool=mysql.createPool({
     port:'3306',
     database:'zhejiangwanfeng',
     connectionLimit:20
-})
+});
 
 
 app.get('/huoqu',function(req,res){
-    pool.query('select*from jituanrongyu',function(err,result){
-        console.log(typeof(result.length));
+    console.log(req.query.pno);
+    var obj=req.query.pno;
+    var sql='select*from jituanrongyu limit ?,?';
+    var offset=(obj-1)*12;
+    pool.query(sql,[offset,12],function(err,result){
+        console.log(result);
         res.send(result)
     })
-})
+});
+
+
 
