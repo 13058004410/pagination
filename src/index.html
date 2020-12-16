@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ajax分页列表实现</title>
+    <style>
+        *{
+            margin:0;padding:0;box-sizing: border-box;
+        }
+        #pagination{
+            border:1px solid orange;
+        }
+        #pagination ul:after{
+            content:'';
+            display:block;
+            overflow: hidden;
+            height:0;
+            clear:both;
+        }
+        #pagination ul li{
+            list-style-type: none;
+            float:left;
+            border:1px solid #999;
+            line-height: 30px;
+            width:10%;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
+    <script src="./js/jquery.min.js"></script>
+</head>
+<body>
+    <div id="content"></div>
+
+    <div id="pagination">
+        <!-- <ul>
+            <li class="li" index="0">上一页</li>
+            <li class="li" index="1">1</li>
+            <li class="li" index="2">2</li>
+            <li class="li" index="3">3</li>
+            <li class="li" index="4">4</li>
+            <li class="li" index="5">下一页</li>
+        </ul> -->
+    </div>
+</body>
+<script>
+    $(function(){       
+        $('.li').click(function(){            
+            var x=$(this).attr('index');
+            var y=parseInt(x)
+            // alert(typeof(y))           
+        });
+
+        //页面默认加载的分页列表
+        function getData(curPage){
+            $.ajax({
+                type:'get',
+                url:'/huoqu?pid:'+curPage,
+                contentType:'application/json;utf-8',  
+                success:function(data){
+                    // console.log(data.length);
+                    // $('#pagination').html(data)
+                    //拿到数据之后在页面循环输出
+                    innerData(data,curPage);
+                },
+                error:function(e){
+                    console.log(e.staus)
+                    console.log(e.responseText)
+                }
+            });
+        }
+
+        function innerData(data,curPage){
+            var str='<ul>';
+                for(var i=0;i<data.length;i++){
+                    str+=`
+                        <li class="li" index="${i}">${i}</li>
+                    `;
+                }
+                str+='</ul>';
+                $('#pagination').html(str);
+        }
+
+
+
+
+    })
+</script>
+</html>
