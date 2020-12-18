@@ -25,11 +25,14 @@ var pool=mysql.createPool({
 
 
 app.get('/huoqu',function(req,res){
-    console.log(req.query.pno);
-    var obj=req.query.pno;
+    // console.log(req.query.pno);
+    var pno=req.query.pno;
+    var psize=req.query.psize;
+    var count=parseInt(psize);
+    // console.log(typeof(count));
     var sql='select*from jituanrongyu limit ?,?';
-    var offset=(obj-1)*12;
-    pool.query(sql,[offset,12],function(err,result){
+    var start=(pno-1)*count;
+    pool.query(sql,[start,count],function(err,result){
         console.log(result);
         res.send(result)
     })
@@ -37,3 +40,22 @@ app.get('/huoqu',function(req,res){
 
 
 
+// var ARR=[1,2,3,4];
+// var runningSum = function(nums) {
+//     var arr=[];   
+//     for(var i=0;i<nums.length;i++){
+//         if(i=0){
+//             arr.push(nums[i]);
+//         }else{
+//             arr.push(nums[i]+nums[i-1]);
+//         }                      
+//     }
+//     console.log(arr);
+//     return arr;   
+
+
+
+
+
+// };
+// runningSum(ARR);
